@@ -1,0 +1,13 @@
+#comparison
+def metrics(clean, den):
+    p = tf.image.psnr(clean[None], den[None], max_val=1.0).numpy()[0]
+    s = tf.image.ssim(clean[None], den[None], max_val=1.0).numpy()[0]
+    return p, s
+
+p_cnn, s_cnn = metrics(img_arr, den_cnn)
+p_res, s_res = metrics(img_arr, den_res)
+p_mob, s_mob = metrics(img_arr, den_mob)
+
+print(f"CNN:      PSNR={p_cnn:.2f} dB, SSIM={s_cnn:.3f}")
+print(f"ResNet:   PSNR={p_res:.2f} dB, SSIM={s_res:.3f}")
+print(f"MobileNet:PSNR={p_mob:.2f} dB, SSIM={s_mob:.3f}")
