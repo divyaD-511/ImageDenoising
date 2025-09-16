@@ -1,0 +1,28 @@
+#CIFAR-10 dataset
+(x_train, _),(x_test, _)=cifar10.load_data()
+x_train=x_train.astype("float32")/255.0
+x_test=x_test.astype("float32")/255.0
+
+# subsample
+x_train=x_train[:MAX_TRAIN]
+x_test=x_test[:MAX_TEST]
+
+print("Train:",x_train.shape,"Test:",x_test.shape)
+
+# add Gaussian noise
+noise_factor=0.1
+rng = np.random.default_rng(42)
+x_train_noisy=np.clip(x_train+noise_factor*rng.normal(size=x_train.shape), 0., 1.)
+x_test_noisy =np.clip(x_test +noise_factor*rng.normal(size=x_test.shape), 0., 1.)
+
+# show sample noisy vs clean
+def show_samples(clean,noisy,n=5):
+    plt.figure(figsize=(10,4))
+    for i in range(n):
+        plt.subplot(2,n,i+1);plt.imshow(noisy[i]);plt.axis('off')
+        if i==0: plt.title("Noisy")
+        plt.subplot(2,n,n+i+1);plt.imshow(clean[i]);plt.axis('off')
+        if i==0: plt.title("Clean")
+    plt.show()
+
+show_samples(x_test,x_test_noisy,n=5)
