@@ -1,0 +1,18 @@
+#metrics
+def psnr_metric(y_true, y_pred):
+    return tf.reduce_mean(tf.image.psnr(y_true, y_pred, max_val=1.0))
+
+def ssim_metric(y_true, y_pred):
+    return tf.reduce_mean(tf.image.ssim(y_true, y_pred, max_val=1.0))
+
+class PSNR_SSIM_Callback(tf.keras.callbacks.Callback):
+    def __init__(self, val_data):
+        self.x_val,self.y_val=val_data
+        self.psnr,self.ssim=[],[]
+    def on_epoch_end(self, epoch, logs=None):
+        pred = self.model.predict(self.x_val, verbose=0)
+        psnr_val = float(np.mean(tf.image.psnr(self.y_val, pred, max_val=1.0)))
+        ssim_val = float(np.mean(tf.image.ssim(self.y_val, pred, max_val=1.0)))
+        self.psnr.append(psnr_val)
+        self.ssim.append(ssim_val)
+        print(f"  val_PSNR={psnr_val:.3f} dB  val_SSIM={ssim_val:.4f}")
