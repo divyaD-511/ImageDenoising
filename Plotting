@@ -1,0 +1,17 @@
+#plotting
+def plot_history(history, psnr_list, title):
+    plt.figure(figsize=(10,4))
+    plt.subplot(1,2,1)
+    plt.plot(history.history['loss'], label="train")
+    plt.plot(history.history['val_loss'], label="val")
+    plt.title(title + " Loss")
+    plt.legend()
+    plt.subplot(1,2,2)
+    plt.plot(psnr_list, label="val PSNR")
+    plt.title(title + " PSNR")
+    plt.legend()
+    plt.show()
+
+plot_history(history_cnn, psnr_cb_cnn.psnr, "CNN")
+plot_history(history_resnet, psnr_cb_res.psnr, "ResNet")
+plot_history(history_mobilenet, psnr_cb_mob.psnr, "MobileNet")
