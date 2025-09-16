@@ -1,0 +1,35 @@
+#Train CNN
+psnr_cb_cnn = PSNR_SSIM_Callback((x_test_noisy, x_test))
+history_cnn = cnn_model.fit(
+    x_train_noisy, x_train,
+    epochs=EPOCHS,
+    batch_size=BATCH_SIZE,
+    validation_data=(x_test_noisy, x_test),
+    callbacks=[psnr_cb_cnn, EarlyStopping(patience=3, restore_best_weights=True)],
+    verbose=1
+)
+cnn_model.save_weights("cnn_weights.weights.h5")
+
+#Train ResNet
+psnr_cb_res = PSNR_SSIM_Callback((x_test_noisy, x_test))
+history_resnet = resnet_model.fit(
+    x_train_noisy, x_train,
+    epochs=EPOCHS,
+    batch_size=BATCH_SIZE,
+    validation_data=(x_test_noisy, x_test),
+    callbacks=[psnr_cb_res, EarlyStopping(patience=3, restore_best_weights=True)],
+    verbose=1
+)
+resnet_model.save_weights("resnet_weights.weights.h5")
+
+#Train MobileNet
+psnr_cb_mob = PSNR_SSIM_Callback((x_test_noisy, x_test))
+history_mobilenet = mobilenet_model.fit(
+    x_train_noisy, x_train,
+    epochs=EPOCHS,
+    batch_size=BATCH_SIZE,
+    validation_data=(x_test_noisy, x_test),
+    callbacks=[psnr_cb_mob, EarlyStopping(patience=3, restore_best_weights=True)],
+    verbose=1
+)
+mobilenet_model.save_weights("mobilenet_weights.weights.h5")
