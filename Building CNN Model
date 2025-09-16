@@ -1,0 +1,60 @@
+#CNN autoencoder
+def build_cnn_autoencoder():
+    inp = layers.Input((IMG_SIZE, IMG_SIZE, 3))
+    x = layers.Conv2D(32, (3,3), activation='relu', padding='same')(inp)
+    x = layers.MaxPooling2D((2,2), padding='same')(x)
+    x = layers.Conv2D(64, (3,3), activation='relu', padding='same')(x)
+    encoded = layers.MaxPooling2D((2,2), padding='same')(x)
+
+    x = layers.Conv2D(64, (3,3), activation='relu', padding='same')(encoded)
+    x = layers.UpSampling2D((2,2))(x)
+    x = layers.Conv2D(32, (3,3), activation='relu', padding='same')(x)
+    x = layers.UpSampling2D((2,2))(x)
+    out = layers.Conv2D(3, (3,3), activation='sigmoid', padding='same')(x)
+
+    model = models.Model(inp, out, name="cnn_autoencoder")
+    model.compile(optimizer='adam', loss='mse', metrics=[psnr_metric, ssim_metric])
+    return model
+
+cnn_model = build_cnn_autoencoder()
+cnn_model.summary()
+
+#ResNet autoencoder
+def build_resnet_autoencoder():
+    base = ResNet50(include_top=False, weights=None, input_shape=(IMG_SIZE,IMG_SIZE,3))
+    out_layer = base.layers[10].output
+    encoder = models.Model(base.input, out_layer)
+    encoder.trainable = False
+
+    x = layers.Conv2D(64,(3,3),activation='relu',padding='same')(encoder.output)
+    x = layers.UpSampling2D((2,2))(x)
+    x = layers.Conv2D(32,(3,3),activation='relu',padding='same')(x)
+    x = layers.UpSampling2D((2,2))(x)
+    out = layers.Conv2D(3,(3,3),activation='sigmoid',padding='same')(x)
+
+    model = models.Model(encoder.input, out, name="resnet_autoencoder")
+    model.compile(optimizer='adam', loss='mse', metrics=[psnr_metric, ssim_metric])
+    return model
+
+resnet_model = build_resnet_autoencoder()
+resnet_model.summary()
+
+#MobileNetV2 autoencoder
+def build_mobilenet_autoencoder():
+    base = MobileNetV2(include_top=False, weights=None, input_shape=(IMG_SIZE,IMG_SIZE,3), alpha=0.35)
+    out_layer = base.layers[20].output
+    encoder = models.Model(base.input, out_layer)
+    encoder.trainable = False
+
+    x = layers.Conv2D(64,(3,3),activation='relu',padding='same')(encoder.output)
+    x = layers.UpSampling2D((2,2))(x)
+    x = layers.Conv2D(32,(3,3),activation='relu',padding='same')(x)
+    x = layers.UpSampling2D((2,2))(x)
+    out = layers.Conv2D(3,(3,3),activation='sigmoid',padding='same')(x)
+
+    model = models.Model(encoder.input, out, name="mobilenet_autoencoder")
+    model.compile(optimizer='adam', loss='mse', metrics=[psnr_metric, ssim_metric])
+    return model
+
+mobilenet_model = build_mobilenet_autoencoder()
+mobilenet_model.summary()
