@@ -1,0 +1,23 @@
+#upload and test
+uploaded = files.upload()
+fname = list(uploaded.keys())[0]
+
+img = Image.open(fname).convert("RGB").resize((IMG_SIZE, IMG_SIZE))
+img_arr = np.array(img).astype("float32") / 255.0
+
+# make noisy version
+rng = np.random.default_rng(123)
+noisy_img = np.clip(img_arr + noise_factor * rng.normal(size=img_arr.shape), 0., 1.)
+inp = np.expand_dims(noisy_img, 0)
+
+den_cnn = cnn_model.predict(inp)[0]
+den_res = resnet_model.predict(inp)[0]
+den_mob = mobilenet_model.predict(inp)[0]
+
+plt.figure(figsize=(12,6))
+plt.subplot(2,3,1); plt.imshow(noisy_img); plt.title("Noisy"); plt.axis('off')
+plt.subplot(2,3,2); plt.imshow(den_cnn); plt.title("CNN"); plt.axis('off')
+plt.subplot(2,3,3); plt.imshow(den_res); plt.title("ResNet"); plt.axis('off')
+plt.subplot(2,3,4); plt.imshow(den_mob); plt.title("MobileNet"); plt.axis('off')
+plt.subplot(2,3,5); plt.imshow(img_arr); plt.title("Clean Image"); plt.axis('off')
+plt.tight_layout(); plt.show()
