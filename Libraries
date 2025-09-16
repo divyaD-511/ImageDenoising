@@ -1,0 +1,21 @@
+#Setup Libraries
+import numpy as np
+import matplotlib.pyplot as plt
+import tensorflow as tf
+from tensorflow.keras import layers, models
+from tensorflow.keras.datasets import cifar10
+from tensorflow.keras.applications import ResNet50, MobileNetV2
+from tensorflow.keras.callbacks import EarlyStopping
+from PIL import Image
+from google.colab import files
+
+# reproducibility
+np.random.seed(42)
+tf.random.set_seed(42)
+
+# Hyperparameters
+IMG_SIZE = 32
+BATCH_SIZE = 32
+EPOCHS = 15   # can set to 10 if you want faster runs
+MAX_TRAIN = 20000
+MAX_TEST = 5000
